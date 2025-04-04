@@ -14,23 +14,23 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Patient Endpoints
-    path('patients/', PatientListCreateView.as_view(), name='register-patient'),
+    path('patients/', PatientListCreateView.as_view(), name='list-create-patients'),
     path('patients/<int:pk>/', PatientDetailView.as_view(), name='get-update-patient'),
     path('patients/<int:pk>/deactivate/', DeactivatePatientView.as_view(), name='deactivate-patient'),
 
     # Appointment Endpoints
-    path('appointments/', AppointmentListCreateView.as_view(), name='schedule-appointment'),
-    path('appointments/<int:pk>/', AppointmentDetailView.as_view(), name='update-appointment'),
+    path('appointments/', AppointmentListCreateView.as_view(), name='create-appointment'),
+    path('appointments/<int:pk>/', AppointmentDetailView.as_view(), name='get-update-appointment'),
     path('appointments/<int:pk>/cancel/', CancelAppointmentView.as_view(), name='cancel-appointment'),
-    path('appointments/date/', AppointmentsByDateView.as_view(), name='appointments-by-date'),
+    path('appointments/by-date/', AppointmentsByDateView.as_view(), name='appointments-by-date'),
 
-    # Appointment Listing
+    # Appointment Filtering
     path('appointments/patient/<int:patientId>/', AppointmentsByPatientView.as_view(), name='appointments-by-patient'),
     path('appointments/doctor/<int:doctorId>/', AppointmentsByDoctorView.as_view(), name='appointments-by-doctor'),
     path('appointments/status/', AppointmentsByStatusView.as_view(), name='appointments-by-status'),
 
     # Billing Endpoints
-    path('billing/', AppointmentBillListCreateView.as_view(), name='generate-bill'),
-    path('billing/<int:pk>/', AppointmentBillDetailView.as_view(), name='get-update-bill'),
-    path('billing/date-range/', BillsByDateRangeView.as_view(), name='bills-by-date-range'),
+    path('bills/', AppointmentBillListCreateView.as_view(), name='list-create-bills'),
+    path('bills/<int:pk>/', AppointmentBillDetailView.as_view(), name='get-update-bill'),
+    path('bills/by-date-range/', BillsByDateRangeView.as_view(), name='bills-by-date-range'),
 ]

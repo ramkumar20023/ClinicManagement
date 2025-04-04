@@ -212,36 +212,45 @@ class PharmBill(models.Model):
         return f"Bill #{self.BillId}"
     
 # Receptionist Models
+
+from django.db import models
+from django.utils.timezone import now
+
 class PatientDetails(models.Model):
     class GenderChoices(models.TextChoices):
-        MALE='male','Male'
-        FEMALE='female','Female'
-        OTHER='other','Other'
+        MALE = 'male', 'Male'
+        FEMALE = 'female', 'Female'
+        OTHER = 'other', 'Other'
 
     class BloodChoices(models.TextChoices):
-        Ap='A+','A+'
-        An='A-','A-'
-        Bp='B+','B+'
-        Bn='B-','B-'
-        AB='AB+','AB+'
-        ABn='AB-','AB-'
-        Op='O+','O+'
-        On='O-','O-'
+        A_POSITIVE = 'A+', 'A+'
+        A_NEGATIVE = 'A-', 'A-'
+        B_POSITIVE = 'B+', 'B+'
+        B_NEGATIVE = 'B-', 'B-'
+        AB_POSITIVE = 'AB+', 'AB+'
+        AB_NEGATIVE = 'AB-', 'AB-'
+        O_POSITIVE = 'O+', 'O+'
+        O_NEGATIVE = 'O-', 'O-'
 
-    PatientId=models.AutoField(primary_key=True)
-    FirstName=models.CharField(max_length=100)
-    LastName=models.CharField(max_length=100)
-    age=models.IntegerField()
-    DOb=models.DateField()
-    Gender=models.CharField(max_length=20, choices=GenderChoices.choices)
-    BloodGroup=models.CharField(max_length=20, choices=BloodChoices.choices, default=BloodChoices.Op)
-    Address=models.TextField()
-    phonenumber=models.CharField(max_length=15)
-    EmergencyContact=models.CharField(max_length=15)
-    alergy=models.TextField(blank=True, null=True)
-    RegisterationDate=models.DateTimeField(auto_now_add=True)
-    LastVisitDate = models.DateField(null=True, blank=True)
-    
+    PatientId = models.AutoField(primary_key=True, verbose_name="Patient ID")
+    FirstName = models.CharField(max_length=100, verbose_name="First Name")
+    LastName = models.CharField(max_length=100, verbose_name="Last Name")
+    Age = models.IntegerField(verbose_name="Age")
+    DOB = models.DateField(verbose_name="Date of Birth")
+    Gender = models.CharField(max_length=20, choices=GenderChoices.choices, verbose_name="Gender")
+    BloodGroup = models.CharField(max_length=20, choices=BloodChoices.choices, default=BloodChoices.O_POSITIVE, verbose_name="Blood Group")
+    Address = models.TextField(verbose_name="Address")
+    PhoneNumber = models.CharField(max_length=15, verbose_name="Phone Number")
+    EmergencyContact = models.CharField(max_length=15, verbose_name="Emergency Contact")
+    Allergy = models.TextField(blank=True, null=True, verbose_name="Allergy Details")
+    RegistrationDate = models.DateTimeField(auto_now_add=True, verbose_name="Registration Date")
+    LastVisitDate = models.DateField(null=True, blank=True, verbose_name="Last Visit Date")
+    is_active = models.BooleanField(default=True, verbose_name="Active Status")
+
+    class Meta:
+        verbose_name = "Patient"
+        verbose_name_plural = "Patients"
+
     def __str__(self):
         return f"{self.FirstName} {self.LastName}"
 
@@ -249,41 +258,55 @@ class PatientDetails(models.Model):
     def full_name(self):
         return f"{self.FirstName} {self.LastName}"
 
-class Appointment(models.Model):
-    class statuschoices(models.TextChoices):
-        SCHEDULED='scheduled','Scheduled'
-        COMPLETED='completed','Completed'
-        CANCELLED='cancelled','Cancelled'
 
-    AppointmentId=models.AutoField(primary_key=True)
-    PatientDetails=models.ForeignKey(PatientDetails, on_delete=models.CASCADE)
-    Doctor=models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    
-    # Doctor_FirstName=models.CharField(max_length=100, null=True, blank=True)
-    # Doctor_LastName=models.CharField(max_length=100, null=True, blank=True)
-    AppointmentDate=models.DateTimeField()
-    Status=models.CharField(max_length=50, choices=statuschoices.choices, default=statuschoices.SCHEDULED)
-    Remarks=models.TextField()
-    Created_at = models.DateTimeField(auto_now_add=True)
+class Appointment(models.Model):
+    class StatusChoices(models.TextChoices):
+        SCHEDULED = 'scheduled', 'Scheduled'
+        COMPLETED = 'completed', 'Completed'
+        CANCELLED = 'cancelled', 'Cancelled'
+
+    AppointmentId = models.AutoField(primary_key=True, verbose_name="Appointment ID")
+    Patient = models.ForeignKey(PatientDetails, on_delete=models.CASCADE, verbose_name="Patient", null=True, blank=True)
+    Doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE, verbose_name="Doctor", null=True, blank=True)
+    AppointmentDate = models.DateTimeField(verbose_name="Appointment Date")
+    Status = models.CharField(max_length=50, choices=StatusChoices.choices, default=StatusChoices.SCHEDULED, verbose_name="Appointment Status")
+    Remarks = models.TextField(blank=True, null=True, verbose_name="Remarks")
+    CreatedAt = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+
+    class Meta:
+        verbose_name = "Appointment"
+        verbose_name_plural = "Appointments"
+
+    # def __str__(self):
+    #    return f"Appointment #{self.AppointmentId} - {self.Patient.full_name}"
 
     def __str__(self):
-        return f"Appointment #{self.AppointmentId} - {self.PatientDetails.full_name}"
+        patient_name = self.Patient.full_name if self.Patient else "No Patient"
+        doctor_name = self.Doctor.full_name if self.Doctor else "No Doctor"
+        return f"Appointment #{self.AppointmentId} - {patient_name} with {doctor_name}"
+
+
 
 class AppointmentBill(models.Model):
-    BillId=models.AutoField(primary_key=True)
-    Appointment=models.ForeignKey(Appointment, on_delete=models.CASCADE)
-    Consultant_fees=models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    ServiceCharge=models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    Total_cost=models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    Created_at = models.DateTimeField(auto_now_add=True)
+    BillId = models.AutoField(primary_key=True, verbose_name="Bill ID")
+    Appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, verbose_name="Appointment")
+    ConsultantFees = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Consultant Fees")
+    ServiceCharge = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Service Charge")
+    TotalCost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Total Cost")
+    BillDate = models.DateField(auto_now_add=True)
+    CreatedAt = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+
+    class Meta:
+        verbose_name = "Appointment Bill"
+        verbose_name_plural = "Appointment Bills"
 
     def save(self, *args, **kwargs):
-        self.Total_cost = self.Consultant_fees + self.ServiceCharge
+        self.TotalCost = self.ConsultantFees + self.ServiceCharge
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Bill #{self.BillId} for Appointment #{self.Appointment.AppointmentId}"
-    
+
 
 # Doctor Management
 

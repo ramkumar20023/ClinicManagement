@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.utils.dateparse import parse_date
+from django.utils.timezone import now
 from .models import PatientDetails, Appointment, AppointmentBill
 from .serializers import PatientSerializer, AppointmentSerializer, AppointmentBillSerializer
 
@@ -46,7 +47,7 @@ class CancelAppointmentView(APIView):
     def patch(self, request, pk):
         try:
             appointment = Appointment.objects.get(pk=pk)
-            appointment.Status = 'cancelled'
+            appointment.Status = 'Cancelled'
             appointment.save()
             return Response({"message": "Appointment cancelled successfully"}, status=status.HTTP_200_OK)
         except Appointment.DoesNotExist:
@@ -63,11 +64,14 @@ class AppointmentsByDateView(APIView):
         
         try:
             parsed_date = parse_date(appointment_date)
-            appointments = Appointment.objects.filter(date=parsed_date)
+            if not parsed_date:
+                return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+
+            appointments = Appointment.objects.filter(AppointmentDate=parsed_date)
             serializer = AppointmentSerializer(appointments, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ValueError:
-            return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Invalid date format."}, status=status.HTTP_400_BAD_REQUEST)
 
 # Appointment Listing Views
 class AppointmentsByPatientView(generics.ListAPIView):
@@ -76,7 +80,7 @@ class AppointmentsByPatientView(generics.ListAPIView):
 
     def get_queryset(self):
         patient_id = self.kwargs['patientId']
-        return Appointment.objects.filter(patient_id=patient_id)
+        return Appointment.objects.filter(PatientDetails__PatientId=patient_id)
 
 class AppointmentsByDoctorView(generics.ListAPIView):
     serializer_class = AppointmentSerializer
@@ -84,7 +88,7 @@ class AppointmentsByDoctorView(generics.ListAPIView):
 
     def get_queryset(self):
         doctor_id = self.kwargs['doctorId']
-        return Appointment.objects.filter(doctor_id=doctor_id)
+        return Appointment.objects.filter(Doctor__DoctorId=doctor_id)
 
 class AppointmentsByStatusView(generics.ListAPIView):
     serializer_class = AppointmentSerializer
@@ -92,7 +96,7 @@ class AppointmentsByStatusView(generics.ListAPIView):
 
     def get_queryset(self):
         status_param = self.request.query_params.get('status')
-        return Appointment.objects.filter(status=status_param)
+        return Appointment.objects.filter(Status=status_param)
 
 # Appointment Billing Views
 class AppointmentBillListCreateView(generics.ListCreateAPIView):
@@ -121,10 +125,11 @@ class BillsByDateRangeView(APIView):
             parsed_end_date = parse_date(end_date)
             
             if not parsed_start_date or not parsed_end_date:
-                return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
 
-            bills = AppointmentBill.objects.filter(date__range=(parsed_start_date, parsed_end_date))
+            bills = AppointmentBill.objects.filter(BillDate__range=(parsed_start_date, parsed_end_date))
             serializer = AppointmentBillSerializer(bills, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ValueError:
-            return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Invalid date format."}, status=status.HTTP_400_BAD_REQUEST)
+            
