@@ -39,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
-    'Clinicapp',
     'rest_framework_simplejwt',
-    'ReceptionistApp',
     'rest_framework.authtoken',
+    'Clinicapp',
+    'ReceptionistApp',
 
 ]
 
