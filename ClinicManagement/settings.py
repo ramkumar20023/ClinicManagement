@@ -91,9 +91,9 @@ WSGI_APPLICATION = 'ClinicManagement.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'clinicmanagement',
+        'NAME': 'ClinicManagement',
         'USER':'root',
-        'PASSWORD':'Suneethi@1',
+        'PASSWORD':'1234',
         'HOST':'localhost',
         'PORT':'3306',
     }
