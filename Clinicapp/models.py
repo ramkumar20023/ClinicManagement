@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -10,23 +11,32 @@ class Role(models.Model):
 
     def __str__(self):
         return self.RoleName
+    
+class Userdetails(models.Model):
+    user=models.OneToOneField(User, on_delete=models.CASCADE, related_name='userdetails')
+    Name=models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.user.username
 
 class Signup(models.Model):
     SignupID=models.AutoField(primary_key=True)
     Role=models.ForeignKey(Role, on_delete=models.CASCADE)
     UserName=models.CharField(max_length=50)
-    EmailId=models.EmailField()
-    Password=models.CharField(max_length=15)
+    EmailId=models.EmailField(unique=True)
+    Password=models.CharField(max_length=128)
 
     def __str__(self):
         return self.UserName
+    
+    @property
+    def id(self):
+        return self.SignupID
 
 class Login(models.Model):
-    UserId=models.AutoField(primary_key=True)
-    Signup=models.ForeignKey(Signup, on_delete=models.CASCADE)
-    Role=models.ForeignKey(Role, on_delete=models.CASCADE)
-    EmailId=models.EmailField()
-    Password=models.CharField(max_length=15)
+    UserId = models.AutoField(primary_key=True)
+    Signup = models.OneToOneField(Signup, on_delete=models.CASCADE)
+    LastLogin = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Login for {self.Signup.UserName}"
@@ -58,7 +68,8 @@ class Doctor(models.Model):
     Consultant_fees=models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     IsActive=models.BooleanField(default=True)
     Department=models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
-    UserId=models.ForeignKey(Login, on_delete=models.SET_NULL, null=True, blank=True)
+    Role=models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
+    # UserId=models.ForeignKey(Login, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"Dr. {self.FirstName} {self.LastName}"
@@ -93,7 +104,7 @@ class StaffManage(models.Model):
     phone_Number=models.CharField(max_length=15)
     Address=models.TextField()
     Role=models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
-    Login=models.ForeignKey(Login, on_delete=models.SET_NULL, blank=True, null=True)
+    # Login=models.ForeignKey(Login, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return f"{self.FirstName} {self.LastName}"
@@ -124,14 +135,6 @@ class Batch(models.Model):
 
     def __str__(self):
         return self.Pharm.MedicineName
-
-class LabDepartment(models.Model):
-    LabId=models.AutoField(primary_key=True)
-    EquipmentName=models.CharField(max_length=250)
-    Department=models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
-
-    def __str__(self):
-        return self.EquipmentName
         
 class LabDevice(models.Model):
     class StatusChoices(models.TextChoices):
@@ -153,7 +156,7 @@ class LabDevice(models.Model):
 # LabTechnician Models
 class LabTest(models.Model):
     LaboratoryId=models.AutoField(primary_key=True)
-    LabDepartment=models.ForeignKey(LabDepartment, on_delete=models.SET_NULL, null=True, blank=True)
+    LabDevice=models.ForeignKey(LabDevice, on_delete=models.SET_NULL, null=True, blank=True)
     TestName=models.CharField(max_length=255)
     TestResult=models.TextField()
     ResultDate = models.DateTimeField(null=True, blank=True)
