@@ -5,10 +5,11 @@ from rest_framework.permissions import IsAuthenticated
 from .models import LabTest, LabBill, LabDevice
 from django.shortcuts import get_object_or_404
 from .serializers import LabTestSerializer, LabBillSerializer,LabDeviceSerializer
+from Clinicapp.permissions import IsLabTechnician
 
 # LabTest API View
 class LabTestAPIView(APIView):
-    permissions_classes=[IsAuthenticated]
+    permissions_classes=[IsAuthenticated | IsLabTechnician]
     def get(self, request, pk=None):
         if pk:
             try:
@@ -51,7 +52,7 @@ class LabTestAPIView(APIView):
 
 # LabBill API View
 class LabBillAPIView(APIView):
-    permissions_classes=[IsAuthenticated]
+    permissions_classes=[IsAuthenticated | IsLabTechnician]
     def get(self, request, pk=None):
         if pk:
             try:
@@ -93,14 +94,14 @@ class LabBillAPIView(APIView):
 
 
 class LabdeviceCreateApiView(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated | IsLabTechnician]
 
     def get(self, request):
         lab=LabDevice.objects.all()
         serializer=LabDeviceSerializer(lab, many=True)
         return Response(serializer.data)
 class LabdeviceRetrieveUpdateView(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated | IsLabTechnician]
 
     def get(self, request, pk):
         labtech=get_object_or_404(LabDevice, pk=pk)

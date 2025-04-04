@@ -4,9 +4,10 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .models import Pharmacist, PharmBill
 from .serializers import PharmacistSerializer, PharmBillSerializer
+from Clinicapp.permissions import IsPharmacist
 
 class PharmacistAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated | IsPharmacist]
 
     def get(self, request, pk=None):
         if pk:
@@ -49,7 +50,7 @@ class PharmacistAPIView(APIView):
 
 
 class PharmBillAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated | IsPharmacist]
 
     def get(self, request, pk=None):
         if pk:

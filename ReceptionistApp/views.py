@@ -6,7 +6,7 @@ from django.utils.dateparse import parse_date
 from django.utils.timezone import now
 from .models import PatientDetails, Appointment, AppointmentBill
 from .serializers import PatientSerializer, AppointmentSerializer, AppointmentBillSerializer
-from Clinicapp.permissions import IsReceptionist,IsAdmin
+from Clinicapp.permissions import IsReceptionist
 
 # Patient Management Views
 class PatientListCreateView(generics.ListCreateAPIView):
