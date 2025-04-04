@@ -38,16 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-<<<<<<< HEAD
-    'rest_framework.authtoken',
-    'rest_framework_simplejwt',
-    'Clinicapp',
-=======
     'django_filters',
     'Clinicapp',
     'rest_framework_simplejwt',
     'ReceptionistApp',
->>>>>>> receptionist
+    'rest_framework.authtoken',
+
 ]
 
 MIDDLEWARE = [
@@ -144,17 +140,13 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-<<<<<<< HEAD
 # Add these to your Django settings
 from datetime import timedelta
 
-=======
->>>>>>> receptionist
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-<<<<<<< HEAD
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
@@ -166,16 +158,3 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
 }
-=======
-}
-
-from datetime import timedelta
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7), 
-}
-
-
-
->>>>>>> receptionist
