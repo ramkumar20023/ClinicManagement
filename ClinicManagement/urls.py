@@ -24,5 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include('Clinicapp.urls')),
     path('api/', include('ReceptionistApp.urls')),  # API Routes
-    path('api/pharmacistapp/', include('pharmacistapp.urls')),  
+    path('api/', include('pharmacistapp.urls')),  
+    path('api/', include('labtechnicianApp.urls')),
 ]
+

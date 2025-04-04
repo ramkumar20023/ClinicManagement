@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'pharmacistapp',
     'ReceptionistApp',
     'django_filters',
+    'labtechnicianApp',
     'rest_framework_simplejwt',
 ]
 
@@ -92,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'clinicmanagement',
         'USER':'root',
-        'PASSWORD':'1234',
+        'PASSWORD':'Suneethi@1',
         'HOST':'localhost',
         'PORT':'3306',
     }
