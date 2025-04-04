@@ -16,12 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+<<<<<<< HEAD
 from django.http import JsonResponse
 
+=======
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+>>>>>>> origin/pharmacist
 
 urlpatterns = [
     
     path('admin/', admin.site.urls),
+<<<<<<< HEAD
     path('api/',include('Clinicapp.urls')),
     path('api/', include('ReceptionistApp.urls')),  # API Routes
+=======
+    path('api/pharmacistapp/', include('pharmacistapp.urls')),  
+    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Login URL
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Token Refresh URL
+>>>>>>> origin/pharmacist
 ]

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,12 +39,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+<<<<<<< HEAD
     'django_filters',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'Clinicapp',
     'ReceptionistApp',
 
+=======
+    'Clinicapp',
+    'pharmacistapp',
+    'rest_framework_simplejwt',
+>>>>>>> origin/pharmacist
 ]
 
 MIDDLEWARE = [
@@ -90,7 +97,7 @@ WSGI_APPLICATION = 'ClinicManagement.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ClinicManagement',
+        'NAME': 'clinicmanagement',
         'USER':'root',
         'PASSWORD':'1234',
         'HOST':'localhost',
@@ -139,22 +146,38 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+<<<<<<< HEAD
 
 # Add these to your Django settings
 from datetime import timedelta
 
+=======
+>>>>>>> origin/pharmacist
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
+<<<<<<< HEAD
         'rest_framework.permissions.IsAuthenticated',
+=======
+        'rest_framework.permissions.IsAuthenticated',  # Require authentication by default
+>>>>>>> origin/pharmacist
     ),
 }
 
 SIMPLE_JWT = {
+<<<<<<< HEAD
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
 }
+=======
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),  # Access token valid for 30 minutes
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Refresh token valid for 7 days
+    "ROTATE_REFRESH_TOKENS": True,  # Get a new refresh token upon use
+    "BLACKLIST_AFTER_ROTATION": True,  # Old refresh tokens become invalid
+    "AUTH_HEADER_TYPES": ("Bearer",),  # Authorization header prefix
+}
+>>>>>>> origin/pharmacist
