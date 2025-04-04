@@ -2,8 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .models import LabTest, LabBill
-from .serializers import LabTestSerializer, LabBillSerializer
+from .models import LabTest, LabBill, LabDevice
+from django.shortcuts import get_object_or_404
+from .serializers import LabTestSerializer, LabBillSerializer,LabDeviceSerializer
 
 # LabTest API View
 class LabTestAPIView(APIView):
@@ -89,3 +90,27 @@ class LabBillAPIView(APIView):
             return Response({"message": "LabBill deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
         except LabBill.DoesNotExist:
             return Response({"error": "LabBill not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class LabdeviceCreateApiView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self, request):
+        lab=LabDevice.objects.all()
+        serializer=LabDeviceSerializer(lab, many=True)
+        return Response(serializer.data)
+class LabdeviceRetrieveUpdateView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self, request, pk):
+        labtech=get_object_or_404(LabDevice, pk=pk)
+        serializer=LabDeviceSerializer(labtech)
+        return Response(serializer.data)
+    
+    def put(self, request, pk):
+        labtech=get_object_or_404(LabDevice, pk=pk)
+        serializer=LabDeviceSerializer(labtech, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
