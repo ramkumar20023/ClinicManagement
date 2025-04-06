@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import LabTest, LabBill,LabDevice
+from .models import LabTest, LabBill
+from Clinicapp.models import LabDevice
 
 class LabTestSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,4 +15,5 @@ class LabBillSerializer(serializers.ModelSerializer):
 class LabDeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model=LabDevice
-        fields='_all_'
+        fields = ['ModuleId', 'EquipmentName', 'Status']
+        read_only_fields = ['ModuleId', 'EquipmentName']

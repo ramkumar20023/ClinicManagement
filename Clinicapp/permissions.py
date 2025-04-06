@@ -1,22 +1,22 @@
-# Add this to your views.py or create a new permissions.py file
 from rest_framework.permissions import BasePermission
 
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
-        return request.user.Role.RoleName == 'Admin'
+        return request.user.groups.filter(name='Admin').exists()
 
 class IsDoctor(BasePermission):
     def has_permission(self, request, view):
-        return request.user.Role.RoleName == 'Doctor'
+        return request.user.groups.filter(name='Doctor').exists()
+
 class IsReceptionist(BasePermission):
     def has_permission(self, request, view):
-        return request.user.Role.RoleName == 'Receptionist'
+        return request.user.groups.filter(name='Receptionist').exists()
 
 class IsPharmacist(BasePermission):
     def has_permission(self, request, view):
-        return request.user.Role.RoleName == 'Pharmacist'
+        return request.user.groups.filter(name='Pharmacist').exists()
     
 class IsLabTechnician(BasePermission):
     def has_permission(self, request, view):
-        return request.user.Role.RoleName == 'Lab Technician'
+        return request.user.groups.filter(name='Lab Technician').exists()
 
