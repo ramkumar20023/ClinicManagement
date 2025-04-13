@@ -1,13 +1,25 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status,permissions
 from rest_framework.permissions import IsAuthenticated
 from .models import Pharmacist, PharmBill
 from .serializers import PharmacistSerializer, PharmBillSerializer
 from Clinicapp.permissions import IsPharmacist
 
+
+
+class PharmacistDashboard(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsPharmacist]
+    
+    def get(self, request):
+        return Response({
+            "message": "Welcome Pharmacist",
+            "data": "Pharmacist dashboard data"
+        })
+    
+
 class PharmacistAPIView(APIView):
-    permission_classes = [IsAuthenticated | IsPharmacist]
+    permission_classes = [permissions.IsAuthenticated, IsPharmacist]
 
     def get(self, request, pk=None):
         if pk:
@@ -50,7 +62,7 @@ class PharmacistAPIView(APIView):
 
 
 class PharmBillAPIView(APIView):
-    permission_classes = [IsAuthenticated | IsPharmacist]
+    permission_classes = [permissions.IsAuthenticated, IsPharmacist]
 
     def get(self, request, pk=None):
         if pk:

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'Clinicapp',
     'pharmacistapp',
     'ReceptionistApp',
+    'Doctorapp',
     'django_filters',
     'labtechnicianApp',
     'rest_framework_simplejwt',

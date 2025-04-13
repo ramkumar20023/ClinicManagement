@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status,permissions
 from rest_framework.permissions import IsAuthenticated
 from .models import LabTest, LabBill
 from Clinicapp.models import LabDevice
@@ -9,8 +9,19 @@ from .serializers import LabTestSerializer, LabBillSerializer,LabDeviceSerialize
 from Clinicapp.permissions import IsLabTechnician
 
 # LabTest API View
+class LabtechnicianDashboard(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsLabTechnician]
+    
+    def get(self, request):
+        return Response({
+            "message": "Welcome LabTechnician",
+            "data": "Lab Technician dashboard data"
+        })
+
+
 class LabTestAPIView(APIView):
-    permissions_classes=[IsAuthenticated | IsLabTechnician]
+    permission_classes = [permissions.IsAuthenticated, IsLabTechnician]
+
     def get(self, request, pk=None):
         if pk:
             try:
@@ -53,7 +64,8 @@ class LabTestAPIView(APIView):
 
 # LabBill API View
 class LabBillAPIView(APIView):
-    permissions_classes=[IsAuthenticated | IsLabTechnician]
+    permission_classes = [permissions.IsAuthenticated, IsLabTechnician]
+
     def get(self, request, pk=None):
         if pk:
             try:
@@ -95,7 +107,8 @@ class LabBillAPIView(APIView):
 
 
 class LabdeviceCreateApiView(APIView):
-    permission_classes=[IsAuthenticated | IsLabTechnician]
+    permission_classes = [permissions.IsAuthenticated, IsLabTechnician]
+
 
     def get(self, request):
         lab=LabDevice.objects.all()
@@ -103,7 +116,8 @@ class LabdeviceCreateApiView(APIView):
         return Response(serializer.data)
     
 class LabdeviceRetrieveUpdateView(APIView):
-    permission_classes=[IsAuthenticated | IsLabTechnician]
+    permission_classes = [permissions.IsAuthenticated, IsLabTechnician]
+
     lookup_field = 'ModuleId'
 
     def get(self, request, pk):

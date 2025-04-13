@@ -1,6 +1,7 @@
 from django.db import models
 from decimal import Decimal
 from Clinicapp.models import Pharm
+from ReceptionistApp.models import Appointment,PatientDetails
 
 # Create your models here.
 
@@ -9,7 +10,8 @@ class Pharmacist(models.Model):
     PharmId = models.AutoField(primary_key=True)
     Pharm = models.ForeignKey('Clinicapp.Pharm', on_delete=models.SET_NULL, null=True, blank=True, related_name='pharmacy_pharmacists')
     Appointment = models.ForeignKey('ReceptionistApp.Appointment', on_delete=models.CASCADE, null=True, blank=True, related_name='pharmacy_orders')
-    Quantity = models.IntegerField(default=1)  
+    Quantity = models.IntegerField(default=1)
+    date=models.DateTimeField(auto_now_add=True, null=True)  
 
     @property
     def MedicineName(self):
@@ -31,13 +33,14 @@ class Pharmacist(models.Model):
   
 class PharmBill(models.Model):
     BillId = models.AutoField(primary_key=True)
+    Bill_No=models.IntegerField()
     Pharmacist = models.ForeignKey(Pharmacist, on_delete=models.CASCADE)
     TotalPrice = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     GST = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('18.00')) 
     FinalPrice = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    Created_at = models.DateTimeField(auto_now_add=True)
-    Appointment = models.ForeignKey('ReceptionistApp.Appointment', on_delete=models.CASCADE, null=True, blank=True, related_name='pharmacy_bills')
-
+    Created_at = models.DateTimeField(auto_now_add=True, null=True)
+    patientinform=models.ForeignKey('ReceptionistApp.PatientDetails', on_delete=models.SET_NULL, null=True, blank=True)
+    
     def save(self, *args, **kwargs):
         if self.Pharmacist and self.Pharmacist.total_price is not None:
             self.TotalPrice = Decimal(self.Pharmacist.total_price)

@@ -14,6 +14,18 @@ from .serializer import (RoleSerializer,Signupserializer,LoginSerializer,Departm
 from django.shortcuts import get_object_or_404
 from .models import User,Userdetails
 from .permissions import IsAdmin
+from django.contrib.auth.models import Group
+
+
+class AdminDashboard(APIView):
+    permission_classes = [IsAdmin]
+    
+    def get(self, request):
+        return Response({
+            "message": "Welcome Admin",
+            "data": "Admin dashboard data"
+        })
+
 
 class SignupAPIView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -22,32 +34,28 @@ class SignupAPIView(APIView):
         serializer = Signupserializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            
+            role = request.data.get('role')
+            if role:
+                try:
+                    group = Group.objects.get(name=role)
+                    user.groups.add(group)
+                except Group.DoesNotExist:
+                    pass
+            
             refresh = RefreshToken.for_user(user)
             
-            # Get user details if they exist
-            user_details = {}
-            if hasattr(user, 'userdetails'):
-                user_details = userdetailsSerializer(user.userdetails).data
-            
-            # Get the role/group name
-            role = None
-            if user.groups.exists():
-                role = user.groups.first().name
-            
             return Response({
-                "status": status.HTTP_201_CREATED,
-                "message": "User registered and logged in successfully",
+                "status": "success",
                 "user_id": user.id,
                 "username": user.username,
                 "role": role,
-                "user_details": user_details,
                 "access": str(refresh.access_token),
                 "refresh": str(refresh),
             }, status=status.HTTP_201_CREATED)
         
         return Response({
-            "status": status.HTTP_400_BAD_REQUEST,
-            "message": "Registration failed",
+            "status": "error",
             "errors": serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
 
@@ -94,7 +102,7 @@ class UserViewSet(viewsets.ModelViewSet):
     
 
 class DoctorCreateView(APIView):
-    permission_classes=[permissions.IsAuthenticated | IsAdmin]
+    permission_classes=[permissions.IsAuthenticated, IsAdmin]
 
     def get(self, request):
         Doctors=Doctor.objects.all()
@@ -110,7 +118,7 @@ class DoctorCreateView(APIView):
     
 
 class DoctorRetrieveUpdateApiView(APIView):
-    permission_classes=[permissions.IsAuthenticated | IsAdmin]
+    permission_classes=[permissions.IsAuthenticated ,IsAdmin]
 
     def get(self, request, pk):
         Doctors=get_object_or_404(Doctor, pk=pk)
@@ -131,7 +139,7 @@ class DoctorRetrieveUpdateApiView(APIView):
         return Response({"message": "Doctor Details deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     
 class StaffmanageCreateApiView(APIView):
-    permission_classes=[permissions.IsAuthenticated | IsAdmin]
+    permission_classes=[permissions.IsAuthenticated, IsAdmin]
 
     def get(self, request):
         Staff=StaffManage.objects.all()
@@ -146,7 +154,7 @@ class StaffmanageCreateApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class StaffmanageRetrieveApiView(APIView):
-    permission_classes=[permissions.IsAuthenticated | IsAdmin]
+    permission_classes=[permissions.IsAuthenticated, IsAdmin]
 
     def get(self, request, pk):
         staff=get_object_or_404(StaffManage, pk=pk)
@@ -167,7 +175,7 @@ class StaffmanageRetrieveApiView(APIView):
         return Response({"message": "Staff Details deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     
 class PharmCreateApiView(APIView):
-    permission_classes=[permissions.IsAuthenticated | IsAdmin]
+    permission_classes=[permissions.IsAuthenticated, IsAdmin]
 
     def get(self, request):
         medical=Pharm.objects.all()
@@ -182,7 +190,7 @@ class PharmCreateApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class PharmRetrieveUpdateApiView(APIView):
-    permission_classes=[permissions.IsAuthenticated | IsAdmin]
+    permission_classes=[permissions.IsAuthenticated, IsAdmin]
 
     def get(self, request, pk):
         medical=get_object_or_404(Pharm, pk=pk)
@@ -203,7 +211,7 @@ class PharmRetrieveUpdateApiView(APIView):
         return Response({"message": "Medicines Details deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     
 class LabdeviceCreateApiView(APIView):
-    permission_classes=[permissions.IsAuthenticated | IsAdmin]
+    permission_classes=[permissions.IsAuthenticated , IsAdmin]
 
     def get(self, request):
         lab=LabDevice.objects.all()
@@ -218,7 +226,7 @@ class LabdeviceCreateApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class LabdeviceRetrieveUpdateView(APIView):
-    permission_classes=[permissions.IsAuthenticated | IsAdmin]
+    permission_classes=[permissions.IsAuthenticated, IsAdmin]
 
     def get(self, request, pk):
         labtech=get_object_or_404(LabDevice, pk=pk)

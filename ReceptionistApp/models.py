@@ -24,6 +24,7 @@ class PatientDetails(models.Model):
         O_NEGATIVE = 'O-', 'O-'
 
     PatientId = models.AutoField(primary_key=True)
+    RegNo = models.IntegerField(unique=True, verbose_name="MR No",null=True, help_text="Medical Record Number")
     FirstName = models.CharField(max_length=100)
     LastName = models.CharField(max_length=100)
     Age = models.IntegerField()

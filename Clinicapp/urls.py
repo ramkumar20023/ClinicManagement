@@ -10,11 +10,14 @@ from .views import (
     PharmRetrieveUpdateApiView,
     LabdeviceCreateApiView,
     LabdeviceRetrieveUpdateView,
+    AdminDashboard,
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
 urlpatterns = [
+    # dashboard
+    path('admindashboard/', AdminDashboard.as_view(), name='admin-dashboard'),
     # Authentication 
     path('auth/signup/', SignupAPIView.as_view(), name='signup'),
     path('auth/login/', LoginApiView.as_view(), name='login'),

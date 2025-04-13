@@ -1,6 +1,23 @@
-from django.db import models
-from django.contrib.auth.models import User
+from django.db import models,migrations
+from django.contrib.auth.models import User,Group
 
+
+# def create_groups(apps, schema_editor):
+#     Group: models.Model= apps.get_model('auth', 'Group')
+#     Group.objects.get_or_create(name='Admin')
+#     Group.objects.get_or_create(name='Doctor')
+#     Group.objects.get_or_create(name='Receptionist')
+#     Group.objects.get_or_create(name='Pharmacist')
+#     Group.objects.get_or_create(name='Lab Technician')
+
+# class Migration(migrations.Migration):
+#     dependencies = [
+#         ('auth', '0001_initial'), 
+#     ]
+    
+#     operations = [  
+#         migrations.RunPython(create_groups),
+#     ]
 
 class Role(models.Model):
     RoleId = models.AutoField(primary_key=True)
@@ -66,6 +83,7 @@ class Doctor(models.Model):
     Specialization = models.CharField(max_length=100)
     Consultant_fees = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     IsActive = models.BooleanField(default=True)
+    Date=models.DateTimeField(auto_now_add=True, null=True)
     Department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, related_name='department_doctors')
     Role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True, related_name='role_doctors')
 
@@ -98,10 +116,12 @@ class StaffManage(models.Model):
     Age = models.IntegerField()
     Gender = models.CharField(max_length=20, choices=GenderChoices.choices, default=GenderChoices.MALE)
     Date_of_Birth = models.DateField()
+    Date_of_Joining = models.DateField(auto_now_add=False)
     BloodGroup = models.CharField(max_length=20, choices=BloodChoices.choices, default=BloodChoices.Op)
     EmailId = models.EmailField()
     phone_Number = models.CharField(max_length=15)
     Address = models.TextField()
+    date=models.DateTimeField(auto_now_add=True, null=True)
     Role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True, related_name='role_staff')
 
     def __str__(self):
@@ -116,6 +136,7 @@ class Pharm(models.Model):
     PricePerUnit = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     lowStock = models.IntegerField()
     supplier = models.CharField(max_length=100)
+    Date=models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return self.MedicineName
@@ -138,14 +159,15 @@ class Batch(models.Model):
 
 class LabDevice(models.Model):
     class StatusChoices(models.TextChoices):
-        WORKING = 'working', 'Working'
-        UNDERMAINTENANCE = 'undermaintenance', 'Under Maintenance'
-        STANDBY = 'standby', 'Standby'
-        OUTOFORDER = 'outoforder', 'Out of Order'
+        WORKING = 'working', 'working'
+        UNDERMAINTENANCE = 'undermaintenance', 'undermaintenance'
+        STANDBY = 'standby', 'standby'
+        OUTOFORDER = 'outoforder', 'outoforder'
 
     ModuleId = models.AutoField(primary_key=True)
     EquipmentName = models.CharField(max_length=250)
     Quantity = models.IntegerField()
+    Date=models.DateTimeField(auto_now_add=True, null=True)
     Last_Service_Date = models.DateField()
     Next_Service_Date = models.DateField(null=True, blank=True)
     Status = models.CharField(max_length=50, choices=StatusChoices.choices, default=StatusChoices.WORKING)

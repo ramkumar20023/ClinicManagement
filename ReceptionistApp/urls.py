@@ -5,10 +5,13 @@ from .views import (
     AppointmentListCreateView, AppointmentDetailView, CancelAppointmentView,
     AppointmentBillListCreateView, AppointmentBillDetailView,
     AppointmentsByPatientView, AppointmentsByDoctorView, AppointmentsByStatusView,
-    AppointmentsByDateView, BillsByDateRangeView
+    AppointmentsByDateView, BillsByDateRangeView,ReceptionistDashboard
 )
 
 urlpatterns = [
+    # dashboard
+    path('receptdashboard/', ReceptionistDashboard.as_view(), name='receptionist-dashboard'),
+
     # JWT Authentication Endpoints
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
