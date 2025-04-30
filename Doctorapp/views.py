@@ -6,11 +6,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status,permissions
 from django.shortcuts import get_object_or_404
-from Clinicapp.permissions import IsDoctor
+from Clinicapp.permissions import IsDoctor,IsLabTechnician
 
 # Create your views here.
 class DoctorinformCreateApiview(APIView):
-    permission_classes=[permissions.IsAuthenticated, IsDoctor]
+    permission_classes=[permissions.IsAuthenticated]
     def get(self, request):
         doctors=doctorinform.objects.all()
         serializer=DoctorinformSerializer(doctors, many=True)
@@ -44,7 +44,7 @@ class DoctorinformReteriveupdateApiview(APIView):
         return Response({"Message":"Doctor information Deleted"}, status=status.HTTP_204_NO_CONTENT)
     
 class PrescriptioncreateApiview(APIView):
-    permission_classes=[permissions.IsAuthenticated, IsDoctor]
+    permission_classes=[permissions.IsAuthenticated]
     def get(self, request):
         Prescriptions=Prescription.objects.all()
         serializer=PrescriptionSerializer(Prescriptions, many=True)
@@ -78,7 +78,7 @@ class PrescriptionRetrieveupdateApiview(APIView):
         return Response({"Message":"Prescription Deleted Successfully"}, status=status.HTTP_204_NO_CONTENT)
     
 class ConsulationcreateApiview(APIView):
-    permission_classes=[permissions.IsAuthenticated, IsDoctor]
+    permission_classes=[permissions.IsAuthenticated]
     def get(self, request):
         Consultant=Consultation.objects.all()
         serializer=ConsultationSerializer(Consultant, many=True)

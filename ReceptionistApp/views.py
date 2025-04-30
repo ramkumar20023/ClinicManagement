@@ -6,7 +6,7 @@ from django.utils.dateparse import parse_date
 from django.utils.timezone import now
 from .models import PatientDetails, Appointment, AppointmentBill
 from .serializers import PatientSerializer, AppointmentSerializer, AppointmentBillSerializer
-from Clinicapp.permissions import IsReceptionist
+from Clinicapp.permissions import IsReceptionist,IsLabTechnician
 
 # Patient Management Views
 class ReceptionistDashboard(APIView):
@@ -21,12 +21,12 @@ class ReceptionistDashboard(APIView):
 class PatientListCreateView(generics.ListCreateAPIView):
     queryset = PatientDetails.objects.all()
     serializer_class = PatientSerializer
-    permission_classes = [permissions.IsAuthenticated, IsReceptionist]
+    permission_classes = [permissions.IsAuthenticated, IsReceptionist | IsLabTechnician]
 
 class PatientDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = PatientDetails.objects.all()
     serializer_class = PatientSerializer
-    permission_classes = [permissions.IsAuthenticated, IsReceptionist]
+    permission_classes = [permissions.IsAuthenticated, IsReceptionist | IsLabTechnician]
 
 class DeactivatePatientView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsReceptionist]

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import LabTest, LabBill
+from .models import AvailableLabTest
 
 # @admin.register(LabTest)
 # class LabTestAdmin(admin.ModelAdmin):
@@ -13,3 +14,4 @@ from .models import LabTest, LabBill
 
 admin.site.register(LabTest)
 admin.site.register(LabBill)
+admin.site.register(AvailableLabTest)

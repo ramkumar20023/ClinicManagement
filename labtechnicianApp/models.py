@@ -1,7 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User, Group
 from ReceptionistApp.models import PatientDetails
 
 class LabTest(models.Model):
+
     LaboratoryId = models.AutoField(primary_key=True)
     TestName = models.CharField(max_length=255)
     TestResult = models.TextField()
@@ -11,9 +13,8 @@ class LabTest(models.Model):
     patientinform = models.ForeignKey(PatientDetails, on_delete=models.SET_NULL, null=True, blank=True, related_name='patient_information')
     Reffered_by = models.ForeignKey('Doctorapp.doctorinform', on_delete=models.CASCADE, null=True, blank=True)
     consultant = models.ForeignKey('Doctorapp.Consultation', on_delete=models.SET_NULL, blank=True, null=True)
-
     def __str__(self):
-        return self.TestName
+        return self.TestName 
 
 class LabBill(models.Model):
     LabBillId = models.AutoField(primary_key=True)
@@ -32,3 +33,16 @@ class LabBill(models.Model):
 
     def __str__(self):
         return f"Bill #{self.LabBillId} for {self.LabTest.TestName if self.LabTest else 'Unknown Test'}"
+
+
+
+
+class AvailableLabTest(models.Model):
+    AvailableLabTestId = models.AutoField(primary_key=True)
+    testName = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    minValue = models.CharField(max_length=50)
+    maxValue = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.testName

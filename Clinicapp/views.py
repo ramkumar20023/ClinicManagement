@@ -13,7 +13,7 @@ from .serializer import (RoleSerializer,Signupserializer,LoginSerializer,Departm
                          LabDeviceSerializer,userdetailsSerializer,Userserializer)
 from django.shortcuts import get_object_or_404
 from .models import User,Userdetails
-from .permissions import IsAdmin
+from .permissions import IsAdmin,IsLabTechnician
 from django.contrib.auth.models import Group
 
 
@@ -211,7 +211,7 @@ class PharmRetrieveUpdateApiView(APIView):
         return Response({"message": "Medicines Details deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     
 class LabdeviceCreateApiView(APIView):
-    permission_classes=[permissions.IsAuthenticated , IsAdmin]
+    permission_classes=[permissions.IsAuthenticated , IsAdmin | IsLabTechnician]
 
     def get(self, request):
         lab=LabDevice.objects.all()
@@ -226,7 +226,7 @@ class LabdeviceCreateApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class LabdeviceRetrieveUpdateView(APIView):
-    permission_classes=[permissions.IsAuthenticated, IsAdmin]
+    permission_classes=[permissions.IsAuthenticated, IsAdmin | IsLabTechnician]
 
     def get(self, request, pk):
         labtech=get_object_or_404(LabDevice, pk=pk)
